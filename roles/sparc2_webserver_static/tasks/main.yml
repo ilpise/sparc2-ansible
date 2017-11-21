@@ -1,0 +1,57 @@
+---
+
+#########################################################
+## See https://github.com/ansible/ansible-modules-extras/issues/681 for potential
+# future performance improvements to npm install
+
+# - name: Install Bower & Gulp to Local Environment
+#  npm: "name={{ item }} path={{ STATIC_SRC }} state=latest"
+#  with_items:
+#    - bower
+#    - gulp
+
+#- name: Install SPARC 2.x Static Development Libraries to Local Environment
+#  npm: path={{ STATIC_SRC }} state=latest
+
+#########################################################
+
+- name: "Update NGINX / sites-available/default"
+  become: yes
+  become_user: root
+  action: template src=templates/nginx.sites-available.default.j2 dest=/etc/nginx/sites-available/default
+  notify:
+    - restart nginx
+
+#########################################################
+
+- name: Check Static Development Environment
+  shell: "cat {{ STATIC_SRC }}/node_modules/{{ item.name }}/package.json | jq -r '.version'"
+  with_items: "{{ STATIC_DEV_DEPS }}"
+  register: installed_npm_pkgs
+  failed_when: False
+  changed_when: False
+  #changed_when: installed_npm_pkgs.stdout != "{{ item.version }}"
+
+- name: Install Static Development Libraries to Environment
+  npm: name={{ item.item.name }} version={{ item.item.version }} state=present
+  with_items: installed_npm_pkgs.results
+  when: item.changed
+
+#########################################################
+
+- name: Create WWW Root
+  become: yes
+  become_user: root
+  file: "path={{ WWW_ROOT }} state=directory owner=root"
+
+- name: Create Static Destination
+  become: yes
+  become_user: root
+  file: "path={{ STATIC_DEST }} state=directory owner=root"
+
+- name: Collect Static
+  become: yes
+  become_user: root
+  shell: "{{ VENV_PATH }}/bin/python manage.py collectstatic --noinput -i gulpfile.js -i package.json -i temp -i node_modules > /dev/null 2>&1"
+  args:
+    chdir: "{{ PRJ_REPO_PATH_MAIN }}"

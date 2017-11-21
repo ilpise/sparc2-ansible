@@ -1,0 +1,11 @@
+---
+
+- name: "Install Cython"
+  pip: "name=cython virtualenv={{ VENV_PATH }}"
+
+- name: "Install Requirements"
+  pip: "requirements={{ item }} virtualenv={{ VENV_PATH }}"
+  with_items: "{{ REQS }}"
+
+- name: "Install Jenks"
+  pip: "name={{ JENKS }} virtualenv={{ VENV_PATH }}"

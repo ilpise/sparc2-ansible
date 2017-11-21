@@ -1,0 +1,10 @@
+---
+
+- name: "GDAL Python Bindings / Requirement Check"
+  shell: "{{ VENV_PATH }}/bin/pip list | grep \"^GDAL (1.10.0)$\""
+  ignore_errors: yes
+  register: gdal_present
+  changed_when: False
+
+- include: gdal.yml
+  when: gdal_present.rc == 1

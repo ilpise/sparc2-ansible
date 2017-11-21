@@ -1,0 +1,32 @@
+---
+
+- name: "apt-get update"
+  apt: update_cache=yes
+  become: yes
+  become_user: root
+
+- name: "apt-get upgrade"
+  apt: upgrade=dist
+  become: yes
+  become_user: root
+
+- name: Install Base Libraries
+  become: yes
+  become_user: root
+  apt: name={{ item }} state=present
+  with_items:
+    - vim
+    - curl
+    - make
+    - git
+    - unzip
+    - jq
+    - python-dev
+    - python-pip
+
+- name: Install Python Libraries"
+  become: yes
+  become_user: root
+  pip: name={{ item }} state=present
+  with_items:
+    - pexpect  # Needed by Ansible expect module
