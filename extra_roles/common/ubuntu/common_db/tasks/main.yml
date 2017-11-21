@@ -1,12 +1,5 @@
 ---
 
-- name: "Install UbuntuGIS PPA"
-  become: yes
-  become_user: root
-  apt_repository: repo="ppa:{{ item }}"
-  with_items:
-    - "ubuntugis/ubuntugis-unstable"
-
 - name: Install PostgreSQL
   become: yes
   become_user: root
