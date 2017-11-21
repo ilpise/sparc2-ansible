@@ -1,9 +1,34 @@
 ---
 
+- name: Install Language packages
+  become: yes
+  become_user: root
+  apt: name=language-pack-en
+  update_cache: yes
+
+- name: workaround to install postgresql with locale set
+  become: yes
+  become_user: root
+  command: /usr/sbin/update-locale LANG="{{ item }}" LC_COLLATE="{{ item }}" LC_CTYPE="{{ item }}" LC_MESSAGES="{{ item }}" LC_MONETARY="{{ item }}" LC_NUMERIC="{{ item }}" LC_TIME="{{ item }}" LC_ALL="{{ item }}"
+  with_items:
+    - en_US.UTF-8
+
 - name: Install PostgreSQL
   become: yes
   become_user: root
   apt: name=postgresql-9.3-postgis-2.1 state=present
+
+- name: Verify the main postgresql cluster exist
+  become: yes
+  become_user: root
+  shell: pg_lsclusters -h | head -n 1 | cut -d' ' -f2
+  register: pgmain
+
+- name: Make sure the cluster exists # the cluster setup may fail because the LC_ALL is not set
+  become: yes
+  become_user: root
+  when: pgmain.stdout != "main"
+  shell: pg_createcluster 9.3 main --start
 
 # psycopg2 is necessary for postgresql_db tasks
 - name: Install Psycopg2
