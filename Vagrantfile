@@ -88,7 +88,6 @@ Vagrant.configure(2) do |config|
     ansible.verbose = "v"
     ansible.raw_arguments = [
       "--extra-vars=@extra_vars/vagrant.yml",
-      "--extra-vars=@secret.yml"
     ]
   end
 
