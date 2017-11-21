@@ -1,6 +1,6 @@
 ---
 
-- set_fact: static_package_dir="{{ item.value }}"
+- set_fact: static_package_dir="{{ STATIC_SRC }}"
 
 - shell: "cat {{ static_package_dir }}/package.json | jq -r '.devDependencies'"
   register: result
@@ -14,8 +14,22 @@
   changed_when: no
   failed_when: no
 
-- name: Install Missing Static Development Libraries to Local Environment
-  npm: name={{ item.item.key }} version={{ item.item.value }} path="{{ static_package_dir }}" state=present
-  with_items: version_check.results
-  when:
-    item.stdout == "" or (item.item.value != "*" and item.stdout != item.item.value)
+# - debug: var=version_check.results
+
+- name: DEBUG01
+  debug: msg= "{{ item }}"
+  with_items: "{{ version_check }}"
+
+- name: DEBUG02
+  debug: msg= "{{ item }}"
+  with_items: "{{ version_check.results }}"
+
+# - name: DEBUG03
+#   debug: msg= "{{ item }}"
+#   with_dict: "{{ version_check.results }}"
+
+# - name: Install Missing Static Development Libraries to Local Environment
+#   npm: name="{{ item.item.key }}" version="{{ item.value }}" path="{{ static_package_dir }}" state=present
+#   with_items: "{{  version_check.results }}"
+#   when:
+#     item.stdout == "" or (item.item.value != "*" and item.stdout != item.item.value)

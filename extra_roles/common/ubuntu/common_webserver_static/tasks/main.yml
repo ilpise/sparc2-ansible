@@ -25,4 +25,4 @@
     - grunt
 
 - include: npm_packages.yml
-  with_dict: "{{ STATIC_SRC }}"
+  # with_items: "{{ STATIC_SRC }}"
