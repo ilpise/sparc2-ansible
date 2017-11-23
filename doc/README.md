@@ -66,19 +66,19 @@ vagrant up
 > __If you have an error related to GDAL:__
 
 > Access the virtual machine running
-> ```
-  vagrant ssh
-  ```
+```
+vagrant ssh
+```
 > Inside the virtual machine run the following command
->
-  ```
-  /home/vagrant/.venvs/sparc2/bin/pip install --no-install GDAL==2.0.0
-  cd /home/vagrant/.venvs/sparc2/build/GDAL
-  /home/vagrant/.venvs/sparc2/bin/python setup.py build_ext --include-dirs=/usr/include/gdal
-  /home/vagrant/.venvs/sparc2/bin/pip install --no-download GDAL==2.0.0
-  pip install django-leaflet
-  pip install django==1.9.6
-  ```
+
+```
+/home/vagrant/.venvs/sparc2/bin/pip install --no-install GDAL==2.0.0
+cd /home/vagrant/.venvs/sparc2/build/GDAL
+/home/vagrant/.venvs/sparc2/bin/python setup.py build_ext --include-dirs=/usr/include/gdal
+/home/vagrant/.venvs/sparc2/bin/pip install --no-download GDAL==2.0.0
+pip install django-leaflet
+pip install django==1.9.6
+```
 
 ## Install the framework
 Access the virtual machine running
