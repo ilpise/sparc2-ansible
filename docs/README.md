@@ -38,7 +38,42 @@
 
 - VirtualBox
 
-# Restore an old version of sparc-ansible
+# How to restore a vagrant box using vmdk disk
+
+In order to restore an old sparc2-ansible machine from a vmdk disk proceed this way
+
+1. Import the machine
+Go to ~/VirtualBox VMs/<name of the machine>/ and double click on the file with vbox extension. This should open VirtualBox GUI and import the machine.
+
+2. Create the box file using the virtual machine you just imported
+Use the following command to create a box file.
+```
+vagrant package --base <name of running virtual machine> --output ubuntu.box
+```
+
+3. Verify the names of the boxes you have in vagrant with
+```
+vagrant box list
+```
+
+4. Import the base box giving it a unique name not in the box list (This way you are not going to override boxes)
+For example to import the ubuntu.box into sparc  
+```
+vagrant box add "sparc" ./ubuntu.box
+```
+After the import you can verify the new box is present with
+```
+vagrant box list
+```
+You can see a box named sparc
+
+Now in the sparc2-ansible.git directory open the Vagrant file and sobstitute the default box config.vm.box = "ubuntu/trusty64"
+with the name of the new imported box
+```
+config.vm.box = "sparc"
+```
+
+you can now start your box in the usual way – using `vagrant up` command from inside the sparc2-ansible directory. 
 
 Install ansible using pip and use the version 2.0.0.1
 
@@ -156,14 +191,22 @@ Restart postgresql
 brew services restart postgresql
 ```
 Modify the file supervisord.conf
+
+The supervisord is started using a configuration file inside the sparc2.git project.
+
+> Before start it is necessary to modify a line ????
+
 ```
-nano supervisord.conf
+nano /home/vagrant/sparc2.git/supervisord.conf
 ```
-Modify the following row this way
+
+> Modify the line ????  The line in /home/vagrant/sparc2.git/supervisord.conf is the same suggested here
+
 ```
 command=/home/vagrant/.venvs/sparc2/bin/gunicorn sparc2.wsgi -c gunicorn.conf.py
 ```
-Restart supervisord
+
+Restart supervisord passing the sparc2.git configuration file
 ```
 supervisord -c /home/vagrant/sparc2.git/supervisord.conf
 ```
