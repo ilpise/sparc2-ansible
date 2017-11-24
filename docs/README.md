@@ -4,33 +4,39 @@
 
 # sparc2-ansible
 
-## Vagrant
-Installation of Vagrant from binary packages https://www.vagrantup.com/downloads.html
+## Requirements
+- Vagrant
 
-Installed version
+	The
 
-```
-~$ vagrant --version
-Vagrant 2.0.1
-```
+	Installation of Vagrant from binary packages https://www.vagrantup.com/downloads.html
 
-In Sparc2 the vagrant file specify
+	Installed version
 
-+ An ubuntu 14.04 server 64 bit __box__
+	```
+	~$ vagrant --version
+	Vagrant 2.0.1
+	```
 
-	Boxes are the package format for Vagrant environments. A box can be used by anyone on any platform that Vagrant supports to bring up an identical working environment.
+	In Sparc2 the vagrant file specify
 
-	The easiest way to use a box is to add a box from the [publicly available catalog of Vagrant boxes](href="https://vagrantcloud.com/boxes/search">)
+	+ An ubuntu 14.04 server 64 bit __box__
 
-+ An *ansible* __provisioner__
+		Boxes are the package format for Vagrant environments. A box can be used by anyone on any platform that Vagrant supports to bring up an identical working environment.
 
-	Provisioners in Vagrant allow you to automatically install software, alter configurations, and more on the machine as part of the vagrant up process.
+		The easiest way to use a box is to add a box from the [publicly available catalog of Vagrant boxes](href="https://vagrantcloud.com/boxes/search">)
+
+	+ An *ansible* __provisioner__
+
+		Provisioners in Vagrant allow you to automatically install software, alter configurations, and more on the machine as part of the vagrant up process.
 
 
-By default, VirtualBox is the default __provider__ for Vagrant.
+		By default, VirtualBox is the default __provider__ for Vagrant.
 
-## Ansible
-Installation of ansible from [packages](http://docs.ansible.com/ansible/latest/intro_installation.html#latest-releases-via-apt-ubuntu)
+- Ansible
+	Installation of ansible from [packages](http://docs.ansible.com/ansible/latest/intro_installation.html#latest-releases-via-apt-ubuntu)
+
+- VirtualBox
 
 # Restore an old version of sparc-ansible
 
@@ -38,7 +44,33 @@ Install ansible using pip and use the version 2.0.0.1
 
 Create a local directory (e.g. wfp) to store the satellite projects around sparc-ansible.
 All the project are copied in a directory with .git 'extension' according with the Vagrant file provided in sparc-ansible project.
-These directories are __synced-folders__  in respect to Vagrant [see documentation](https://www.vagrantup.com/docs/synced-folders/)
+These directories are __synced-folders__  in respect to Vagrant [see documentation](https://www.vagrantup.com/docs/synced-folders/).
+
+>Synced folders are configured within your Vagrantfile using the config.vm.synced_folder method. Usage of the configuration directive is very simple:
+
+```ruby
+Vagrant.configure("2") do |config|
+  # other config here
+
+  config.vm.synced_folder "src/", "/srv/website"
+end
+```
+The first parameter is a path to a directory on the host machine. If the path is relative, it is relative to the project root. The second parameter must be an absolute path of where to share the folder within the guest machine. This folder will be created (recursively, if it must) if it does not exist.
+
+Looking to the Vagrant file in sparc2-ansible we have to sync the following folders
+
+```ruby
+config.vm.synced_folder "~/wfp/geodash-base.git", "/home/vagrant/geodash-base.git"
+config.vm.synced_folder "~/wfp/public/geodash-framework-django.git", "/home/vagrant/geodash-framework-django.git"
+config.vm.synced_folder "~/workspaces/public/sparc2-core.js.git", "/home/vagrant/sparc2-core.js.git"
+config.vm.synced_folder "~/workspaces/public/sparc2-pipeline.git", "/home/vagrant/sparc2-core.js.git"
+config.vm.synced_folder "~/workspaces/public/sparc2-plugin-calendar.git", "/home/vagrant/sparc2-plugin-calendar.git"
+config.vm.synced_folder "~/workspaces/public/sparc2-plugin-sidebar.git", "/home/vagrant/sparc2-plugin-sidebar.git"
+config.vm.synced_folder "~/wfp/public/sparc2.git", "/home/vagrant/sparc2.git"
+```
+
+Then from your home on the host machine create a wfp directory change dir into it and clone the packages
+
 ```
 cd wfp
 
