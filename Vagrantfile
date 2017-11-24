@@ -43,7 +43,7 @@ Vagrant.configure(2) do |config|
   config.vm.synced_folder "~/wfp/geodash-base.git", "/home/vagrant/geodash-base.git"
   config.vm.synced_folder "~/wfp/geodash-framework-django.git", "/home/vagrant/geodash-framework-django.git"
   config.vm.synced_folder "~/wfp/sparc2-core.js.git", "/home/vagrant/sparc2-core.js.git"
-  config.vm.synced_folder "~/wfp/public/sparc2-pipeline.git", "/home/vagrant/sparc2-pipeline.git"
+  config.vm.synced_folder "~/wfp/sparc2-pipeline.git", "/home/vagrant/sparc2-pipeline.git"
   config.vm.synced_folder "~/wfp/sparc2-plugin-calendar.git", "/home/vagrant/sparc2-plugin-calendar.git"
   config.vm.synced_folder "~/wfp/sparc2-plugin-sidebar.git", "/home/vagrant/sparc2-plugin-sidebar.git"
   config.vm.synced_folder "~/wfp/sparc2.git", "/home/vagrant/sparc2.git"
