@@ -67,13 +67,46 @@ vagrant box list
 ```
 You can see a box named sparc
 
-Now in the sparc2-ansible.git directory open the Vagrant file and sobstitute the default box config.vm.box = "ubuntu/trusty64"
+5. Now in the sparc2-ansible.git directory open the Vagrant file and sobstitute the default box config.vm.box = "ubuntu/trusty64"
 with the name of the new imported box
 ```
 config.vm.box = "sparc"
 ```
 
-you can now start your box in the usual way – using `vagrant up` command from inside the sparc2-ansible directory. 
+6. you can now start your box in the usual way – using `vagrant up` command from inside the sparc2-ansible directory.
+
+If during the boot process you experience this Warning
+```
+ default: Warning: Authentication failure. Retrying...
+ default: Warning: Authentication failure. Retrying...
+ default: Warning: Authentication failure. Retrying...
+ default: Warning: Authentication failure. Retrying...
+ default: Warning: Authentication failure. Retrying...
+ default: Warning: Authentication failure. Retrying...
+ default: Warning: Authentication failure. Retrying...
+```
+
+Shared folders will not be linked.
+
+To solve the problem ssh in the guest machine remove the `.ssh/authorized_keys` file and reset it with
+```
+wget --no-check-certificate https://raw.github.com/mitchellh/vagrant/master/keys/vagrant.pub -O /home/vagrant/.ssh/authorized_keys  
+```
+
+In order to verify the box you are running is the correct one use
+```
+vagrant global-status
+```
+it will output the status of the boxes
+```
+id       name    provider   state    directory                              
+----------------------------------------------------------------------------
+9de5394  default virtualbox poweroff /home/hostmachineusername/wfp/sparc2-ansible.git    
+9d2bb89  default virtualbox running  /home/hostmachineusername/wfpose/sparc2-ansible.git
+```
+
+
+# Installation
 
 Install ansible using pip and use the version 2.0.0.1
 
@@ -97,10 +130,10 @@ Looking to the Vagrant file in sparc2-ansible we have to sync the following fold
 ```ruby
 config.vm.synced_folder "~/wfp/geodash-base.git", "/home/vagrant/geodash-base.git"
 config.vm.synced_folder "~/wfp/public/geodash-framework-django.git", "/home/vagrant/geodash-framework-django.git"
-config.vm.synced_folder "~/workspaces/public/sparc2-core.js.git", "/home/vagrant/sparc2-core.js.git"
-config.vm.synced_folder "~/workspaces/public/sparc2-pipeline.git", "/home/vagrant/sparc2-core.js.git"
-config.vm.synced_folder "~/workspaces/public/sparc2-plugin-calendar.git", "/home/vagrant/sparc2-plugin-calendar.git"
-config.vm.synced_folder "~/workspaces/public/sparc2-plugin-sidebar.git", "/home/vagrant/sparc2-plugin-sidebar.git"
+config.vm.synced_folder "~/wfp/sparc2-core.js.git", "/home/vagrant/sparc2-core.js.git"
+config.vm.synced_folder "~/wfp/sparc2-pipeline.git", "/home/vagrant/sparc2-core.js.git"
+config.vm.synced_folder "~/wfp/sparc2-plugin-calendar.git", "/home/vagrant/sparc2-plugin-calendar.git"
+config.vm.synced_folder "~/wfp/sparc2-plugin-sidebar.git", "/home/vagrant/sparc2-plugin-sidebar.git"
 config.vm.synced_folder "~/wfp/public/sparc2.git", "/home/vagrant/sparc2.git"
 ```
 
@@ -113,8 +146,8 @@ git clone https://github.com/wfp-ose/geodash-base.git geodash-base.git
 git clone https://github.com/wfp-ose/geodash-framework-django.git geodash-framework-django.git
 git clone https://github.com/wfp-ose/sparc2-core.js.git sparc2-core.js.git
 git clone https://github.com/wfp-ose/sparc2-pipeline.git sparc2-pipeline.git
-git clone https://github.com/wfp-ose/sparc2-plugin-calendar.git sparc2-plugin.calendar.git
-git clone https://github.com/wfp-ose/sparc2-plugin-sidebar.git sparc2-plugin.sidebar.git
+git clone https://github.com/wfp-ose/sparc2-plugin-calendar.git sparc2-plugin-calendar.git
+git clone https://github.com/wfp-ose/sparc2-plugin-sidebar.git sparc2-plugin-sidebar.git
 git clone https://github.com/wfp-ose/sparc2.git sparc2.git
 ```
 Then clone the sparc2-ansible project
@@ -214,12 +247,16 @@ Verify the supervisord Status
 ```
 supervisorctl status
 ```
-If you have an error about occupied port stop all the supervisord process and restart it
+If you have an error about occupied port (? http://127.0.0.1:9001 refused connection
+?) stop all the supervisord process and restart it
+
 
 Run collectstatic to create Django static files
 ```
 sudo /home/vagrant/.venvs/sparc2/bin/python manage.py collectstatic --noinput -i gulpfile.js -i package.json -i temp -i node_modules
 ```
+
+??? activate the python virtualenvironment
 Start the application on all the network interfaces port 8000
 ```
 python manage.py runserver 0.0.0.0:8000
