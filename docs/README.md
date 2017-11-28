@@ -154,6 +154,12 @@ Then clone the sparc2-ansible project
 ```
 git clone https://github.com/karakostis/sparc2-ansible.git sparc2-ansible.git
 ```
+
+We have to set the right branch for geodash-framework-django to sparc2
+```
+cd geodash-framework-django.git
+git checkout sparc2
+```
 change dir in sparc2-ansible.git
 ```
 cd sparc2-ansible.git
@@ -185,10 +191,30 @@ Access the virtual machine running
 ```
 vagrant ssh
 ```
-Run the following commands
+
+enter the sparc2 virtualenvironment
+
+```
+workon sparc2
+```
+
+>Run the following commands in order to install geodash-framework-django
 ```
 /home/vagrant/.venvs/sparc2/bin/pip install -e git+https://github.com/wfp-ose/geodash-framework-django.git@sparc2#egg=geodash-framework-django
 ```
+
+Install the geodash-framework-django from local downloaded repository (be shure you are in the sparc2 branch)
+```
+(sparc2)vagrant@vagrant-ubuntu-trusty-64:~$ pip install -e git+file:///home/vagrant/geodash-framework-django.git#egg=geodash-framework-django
+Obtaining geodash-framework-django from git+file:///home/vagrant/geodash-framework-django.git#egg=geodash-framework-django
+  Cloning file:///home/vagrant/geodash-framework-django.git to ./.venvs/sparc2/src/geodash-framework-django
+Installing collected packages: geodash-framework-django
+  Running setup.py develop for geodash-framework-django
+Successfully installed geodash-framework-django
+```
+
+### Postgresql configuration
+
 Modify the postgresql configuration
 
 ```
@@ -223,44 +249,55 @@ Restart postgresql
 ```
 brew services restart postgresql
 ```
-Modify the file supervisord.conf
+
+### Supervisord
 
 The supervisord is started using a configuration file inside the sparc2.git project.
 
-> Before start it is necessary to modify a line ????
+Verify the supervisord Status
+```
+supervisorctl status
+```
+If you have an error about `http://127.0.0.1:9001 refused connection` stop all the supervisord process and restart it.
+
+Before restart verify the configuration file in
 
 ```
-nano /home/vagrant/sparc2.git/supervisord.conf
+/home/vagrant/sparc2.git/supervisord.conf
 ```
 
-> Modify the line ????  The line in /home/vagrant/sparc2.git/supervisord.conf is the same suggested here
-
+the line about the command related with gunicorn   
 ```
-command=/home/vagrant/.venvs/sparc2/bin/gunicorn sparc2.wsgi -c gunicorn.conf.py
+command=/home/vagrant/.venvs/sparc2/bin/gunicorn sparc2.wsgi -c /home/vagrant/sparc2.git/gunicorn.conf.py
 ```
 
 Restart supervisord passing the sparc2.git configuration file
 ```
 supervisord -c /home/vagrant/sparc2.git/supervisord.conf
 ```
-Verify the supervisord Status
-```
-supervisorctl status
-```
-If you have an error about occupied port (? http://127.0.0.1:9001 refused connection
-?) stop all the supervisord process and restart it
 
+you can verify the status of the program launched from supervisord using the `supervisorctl stasus` command that have to return something like
 
-Run collectstatic to create Django static files
+```
+sparc2:gunicorn                  RUNNING    pid 2780, uptime 0:16:12
+sparc2:memcached                 RUNNING    pid 2728, uptime 0:16:20
+```
+
+### collectstatic
+Change directory in `/home/vagrant/sparc2.git` where the `manage.py` file is located and run collectstatic to create Django static files
 ```
 sudo /home/vagrant/.venvs/sparc2/bin/python manage.py collectstatic --noinput -i gulpfile.js -i package.json -i temp -i node_modules
 ```
 
-??? activate the python virtualenvironment
+### Run the application
+Be sure have the sparc2 virtualenv active.
+
 Start the application on all the network interfaces port 8000
 ```
 python manage.py runserver 0.0.0.0:8000
 ```
+> ImportError: cannot import name GEOMETRY_TYPE_TO_OGR
+
 Verify the access to the postgresql database ?from the vagrant user?.
 Dump the database
 ```
