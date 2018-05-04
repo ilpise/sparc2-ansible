@@ -144,6 +144,12 @@ vagrant@vagrant-ubuntu-trusty-64:~$ npm install gulp -g
 ```
 
 Compile sparc2 with gulp
+	> If you have not installed the node packages you have to run 
+	```
+	vagrant@vagrant-ubuntu-trusty-64:~/sparc2.git/sparc2/static/sparc2$ npm install
+	```
+Compilation 
+
 ```
 vagrant@vagrant-ubuntu-trusty-64:~/sparc2.git/sparc2/static/sparc2$ gulp default
 ```
